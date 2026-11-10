@@ -1,0 +1,1 @@
+Erste Version: zwölf Widget-Stile, Material-Formen, Vorlagen, Live-Vorschau, Samsung-Blur, Englisch und Deutsch.

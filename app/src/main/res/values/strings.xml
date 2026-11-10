@@ -1,0 +1,208 @@
+<resources>
+    <string name="app_name" translatable="false">CLimit</string>
+
+    <!-- App -->
+    <string name="welcome_body">Usage widgets for Claude. Sign in once; your session stays encrypted on this device and is only ever sent to claude.ai.</string>
+    <string name="action_sign_in">Sign in</string>
+    <string name="action_sign_out">Sign out</string>
+    <string name="action_refresh">Refresh</string>
+    <string name="action_cancel">Cancel</string>
+    <string name="action_save">Save</string>
+    <string name="action_close">Close</string>
+    <string name="action_delete">Delete</string>
+    <string name="action_add_widget">Add widget</string>
+    <string name="home_subtitle">Your Claude usage</string>
+    <string name="home_more_limits">More limits</string>
+    <string name="home_widgets_title">Widgets</string>
+    <string name="home_widgets_body">Long-press a CLimit widget on your home screen and choose its settings to change the look.</string>
+    <string name="home_updated">Updated %1$s</string>
+
+    <string name="login_hint">Sign in with your email and the code you receive. Google sign-in does not work here.</string>
+
+    <string name="limit_session">5-hour limit</string>
+    <string name="limit_weekly">Weekly limit</string>
+    <string name="limit_weekly_model">Weekly limit · %1$s</string>
+    <string name="surfaces_title">This week by surface</string>
+
+    <string name="reset_due">Resets any moment</string>
+    <string name="reset_in_days">Resets in %1$d d %2$d h</string>
+    <string name="reset_in_hours">Resets in %1$d h %2$d min</string>
+    <string name="reset_in_minutes">Resets in %1$d min</string>
+
+    <string name="error_signed_out">Your session has ended. Sign out and sign in again.</string>
+    <string name="error_blocked">claude.ai refused the request from this app.</string>
+    <string name="error_rate_limited">Too many requests. Try again in a few minutes.</string>
+    <string name="error_network">No connection to claude.ai.</string>
+    <string name="error_unexpected">claude.ai sent an unexpected answer.</string>
+
+    <!-- Widget -->
+    <string name="widget_rings_name">Limits</string>
+    <string name="widget_rings_description">Your Claude limits in twelve styles</string>
+    <string name="widget_compact_name">Compact</string>
+    <string name="widget_compact_description">One limit as a Material shape</string>
+    <string name="widget_label_session">5 h</string>
+    <string name="widget_label_week">Week</string>
+    <string name="widget_resets">resets %1$s</string>
+    <string name="widget_resets_in">resets in %1$s</string>
+    <string name="widget_sign_in">Open CLimit to sign in</string>
+    <string name="widget_loading">Loading…</string>
+    <string name="widget_stale">As of %1$s</string>
+    <string name="widget_updated">Updated %1$s</string>
+    <string name="widget_a11y_item">%1$s %2$d percent</string>
+    <string name="countdown_days">%1$d d %2$d h</string>
+    <string name="countdown_hours">%1$d h %2$d min</string>
+    <string name="countdown_minutes">%1$d min</string>
+
+    <!-- Widget settings -->
+    <string name="config_title">Customize widget</string>
+    <string name="tab_style">Style</string>
+    <string name="tab_content">Content</string>
+    <string name="tab_color">Color</string>
+    <string name="tab_card">Card</string>
+    <string name="tab_behavior">Behavior</string>
+    <string name="preview_background">Preview background</string>
+    <string name="bg_pick">Choose image</string>
+
+    <string name="config_presets">Presets</string>
+    <string name="preset_pixel">Pixel</string>
+    <string name="preset_expressive">Expressive</string>
+    <string name="preset_shapes">Shapes</string>
+    <string name="preset_minimal">Minimal</string>
+    <string name="preset_bars">Bars</string>
+    <string name="preset_gauge">Gauge</string>
+    <string name="preset_contrast">Contrast</string>
+    <string name="preset_glass">Glass</string>
+    <string name="preset_mono">Mono</string>
+    <string name="preset_combo">Combo</string>
+    <string name="preset_segments">Segments</string>
+    <string name="preset_dots">Dots</string>
+    <string name="preset_new">New</string>
+    <string name="preset_save">Save look as preset</string>
+    <string name="preset_name">Name</string>
+    <string name="preset_saved">Preset saved</string>
+    <string name="preset_delete_title">Delete preset?</string>
+
+    <string name="config_style">Style</string>
+    <string name="style_rings">Rings</string>
+    <string name="style_wavy_rings">Wavy</string>
+    <string name="style_concentric">Nested</string>
+    <string name="style_gauge">Gauge</string>
+    <string name="style_bars">Bars</string>
+    <string name="style_wavy_bars">Wave bars</string>
+    <string name="style_segments">Segments</string>
+    <string name="style_dots">Dots</string>
+    <string name="style_shapes">Shapes</string>
+    <string name="style_fill">Fill</string>
+    <string name="style_numbers">Numbers</string>
+    <string name="style_combo">Combo</string>
+
+    <string name="config_gauge">Gauge</string>
+    <string name="config_thickness">Thickness</string>
+    <string name="config_wave_height">Wave height</string>
+    <string name="config_wave_length">Wave length</string>
+    <string name="config_count">Count</string>
+    <string name="config_ring_open">Open ring</string>
+    <string name="config_ring_open_sub">Gap at the bottom, like a dial</string>
+    <string name="config_ring_start">Start</string>
+    <string name="config_clockwise">Clockwise</string>
+    <string name="config_time">Time progress</string>
+    <string name="config_time_sub">Thin second gauge: how much of the window has passed</string>
+
+    <string name="config_limits">Limits</string>
+    <string name="config_models">Models</string>
+    <string name="action_move_up">Move up</string>
+    <string name="action_move_down">Move down</string>
+    <string name="config_arrangement">Arrangement</string>
+    <string name="arrangement_auto">Auto</string>
+    <string name="arrangement_row">Side by side</string>
+    <string name="arrangement_column">Stacked</string>
+
+    <string name="config_texts">Text</string>
+    <string name="config_show_labels">Labels</string>
+    <string name="config_label_session">Label for the 5-hour limit</string>
+    <string name="config_label_weekly">Label for the weekly limit</string>
+    <string name="config_show_reset">Reset time</string>
+    <string name="reset_clock">Clock time</string>
+    <string name="reset_countdown">Countdown</string>
+    <string name="config_countdown_hint">Widgets refresh every 15 minutes, so the countdown can be up to 15 minutes behind.</string>
+    <string name="config_percent_sign">Percent sign</string>
+    <string name="config_show_remaining">Show what is left</string>
+
+    <string name="config_sizes">Sizes</string>
+    <string name="config_number_size">Numbers</string>
+    <string name="config_label_size">Labels</string>
+    <string name="config_reset_size">Reset line</string>
+    <string name="config_number_font">Number font</string>
+    <string name="font_flex">Roboto Flex</string>
+    <string name="font_system">System</string>
+    <string name="config_number_weight">Weight</string>
+    <string name="config_number_width">Width</string>
+
+    <string name="config_color_source">Color source</string>
+    <string name="source_dynamic">Wallpaper</string>
+    <string name="source_custom">Custom</string>
+    <string name="source_orange">Orange</string>
+    <string name="source_red">Red</string>
+    <string name="source_pink">Pink</string>
+    <string name="source_purple">Purple</string>
+    <string name="source_blue">Blue</string>
+    <string name="source_cyan">Cyan</string>
+    <string name="source_green">Green</string>
+    <string name="source_yellow">Yellow</string>
+    <string name="config_hue">Hue</string>
+    <string name="config_theme">Theme</string>
+    <string name="config_theme_system">System</string>
+    <string name="config_theme_light">Light</string>
+    <string name="config_theme_dark">Dark</string>
+    <string name="config_indicator_colors">Gauge colors</string>
+    <string name="config_indicator_roles">Per limit</string>
+    <string name="config_indicator_single">Single</string>
+    <string name="config_indicator_level">By level</string>
+    <string name="config_warn_at">Warning from</string>
+    <string name="config_critical_at">Critical from</string>
+
+    <string name="config_container">Card</string>
+    <string name="config_container_surface">Surface</string>
+    <string name="config_container_surface_high">Raised</string>
+    <string name="config_container_primary">Primary</string>
+    <string name="config_container_secondary">Secondary</string>
+    <string name="config_container_tertiary">Tertiary</string>
+    <string name="config_container_inverse">Inverse</string>
+    <string name="config_container_none">None</string>
+    <string name="config_opacity">Opacity</string>
+    <string name="config_blur">Background blur</string>
+    <string name="blur_active">One UI Home detected: the wallpaper behind the card is blurred. Lower the opacity to see more of it.</string>
+    <string name="blur_unsupported">Real blur needs Samsung\'s One UI Home (One UI 7 or newer). On this launcher the card simply stays translucent.</string>
+    <string name="blur_shape_hint">With blur the card is always a rounded rectangle.</string>
+    <string name="config_card_shape">Shape</string>
+    <string name="config_corners">Corner radius</string>
+    <string name="config_outline">Outline</string>
+    <string name="config_spacing_group">Spacing</string>
+    <string name="config_padding">Padding</string>
+    <string name="config_spacing">Between limits</string>
+
+    <string name="config_tap">When tapped</string>
+    <string name="tap_refresh">Refresh</string>
+    <string name="tap_open_app">Open CLimit</string>
+    <string name="tap_open_claude">Open Claude</string>
+    <string name="tap_open_settings">Open these settings</string>
+    <string name="tap_none">Nothing</string>
+    <string name="config_freshness">Freshness</string>
+    <string name="config_show_updated">Show last update</string>
+    <string name="config_stale_hint">Mark old data</string>
+    <string name="config_stale_hint_sub">When the numbers are more than an hour old</string>
+
+    <string name="config_transfer">Transfer</string>
+    <string name="action_copy_from">Copy from another widget</string>
+    <string name="action_export">Copy settings</string>
+    <string name="action_export_sub">As text to the clipboard</string>
+    <string name="action_import">Paste settings</string>
+    <string name="action_import_sub">From the clipboard</string>
+    <string name="action_reset">Reset to defaults</string>
+    <string name="exported">Settings copied</string>
+    <string name="imported">Settings pasted</string>
+    <string name="import_failed">No CLimit settings in the clipboard</string>
+    <string name="no_other_widgets">There are no other CLimit widgets.</string>
+    <string name="widget_number">Widget %1$d</string>
+    <string name="copied_from">Settings taken over</string>
+</resources>

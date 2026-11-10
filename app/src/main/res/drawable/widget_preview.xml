@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Static picture for the launcher's widget picker: two rings on a dark card. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="280dp"
+    android:height="140dp"
+    android:viewportWidth="280"
+    android:viewportHeight="140">
+    <path
+        android:fillColor="#E61F1B24"
+        android:pathData="M28,0h224a28,28 0,0 1,28 28v84a28,28 0,0 1,-28 28h-224a28,28 0,0 1,-28 -28v-84a28,28 0,0 1,28 -28z" />
+    <!-- Left ring: track, then about 45 % -->
+    <path
+        android:pathData="M78,26a44,44 0,1 1,-0.1 0"
+        android:strokeWidth="10"
+        android:strokeColor="#33FFFFFF"
+        android:strokeLineCap="round" />
+    <path
+        android:pathData="M78,26a44,44 0,0 1,13.6 85.8"
+        android:strokeWidth="10"
+        android:strokeColor="#B8C4FF"
+        android:strokeLineCap="round" />
+    <!-- Right ring: track, then about 70 % -->
+    <path
+        android:pathData="M202,26a44,44 0,1 1,-0.1 0"
+        android:strokeWidth="10"
+        android:strokeColor="#33FFFFFF"
+        android:strokeLineCap="round" />
+    <path
+        android:pathData="M202,26a44,44 0,1 1,-41.8 57.6"
+        android:strokeWidth="10"
+        android:strokeColor="#DDBCE8"
+        android:strokeLineCap="round" />
+</vector>

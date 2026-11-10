@@ -1,0 +1,84 @@
+{
+  "amber_cistern": null,
+  "amber_gauge": null,
+  "extra_usage": {
+    "credits_ever_enabled": true,
+    "currency": null,
+    "is_enabled": false,
+    "monthly_limit": null,
+    "used_credits": null,
+    "utilization": null
+  },
+  "five_hour": {
+    "limit_dollars": null,
+    "locked_reason": null,
+    "remaining_dollars": null,
+    "resets_at": "2026-11-10T22:00:00.511263+00:00",
+    "used_dollars": null,
+    "utilization": 10
+  },
+  "iguana_necktie": null,
+  "limits": [
+    {
+      "group": "session",
+      "is_active": false,
+      "kind": "session",
+      "percent": 10,
+      "resets_at": "2026-11-10T22:00:00.511263+00:00",
+      "scope": null,
+      "severity": "normal"
+    },
+    {
+      "group": "weekly",
+      "is_active": true,
+      "kind": "weekly_all",
+      "percent": 55,
+      "resets_at": "2026-11-12T08:00:00.511282+00:00",
+      "scope": null,
+      "severity": "normal"
+    },
+    {
+      "group": "weekly",
+      "is_active": false,
+      "kind": "weekly_scoped",
+      "percent": 3,
+      "resets_at": "2026-11-12T07:59:59.511589+00:00",
+      "scope": {
+        "model": { "display_name": "Fable", "id": null },
+        "surface": null
+      },
+      "severity": "normal"
+    }
+  ],
+  "member_dashboard_available": false,
+  "pace": null,
+  "seven_day": {
+    "limit_dollars": null,
+    "locked_reason": null,
+    "remaining_dollars": null,
+    "resets_at": "2026-11-12T08:00:00.511282+00:00",
+    "used_dollars": null,
+    "utilization": 55
+  },
+  "seven_day_breakdown": {
+    "as_of": "2026-11-10T17:21:10.525580+00:00",
+    "rows": [
+      { "display_name": "Claude Code", "key": "claude_code", "percent": 15 },
+      { "display_name": "Chats", "key": "chat", "percent": 1 },
+      { "display_name": "Cowork", "key": "cowork", "percent": 84 },
+      { "display_name": "Sonstige", "key": "other", "percent": 0 }
+    ],
+    "window_started_at": "2026-11-05T08:00:00.511282+00:00"
+  },
+  "seven_day_opus": null,
+  "seven_day_sonnet": null,
+  "spend": {
+    "enabled": false,
+    "percent": 0,
+    "severity": "normal",
+    "used": { "amount_minor": 0, "currency": "USD", "exponent": 2 }
+  },
+  "weekly_scoped_shares": [
+    { "allowance_percent_of_weekly": 50, "limit_index": 2, "used_percent_of_weekly": 2 }
+  ]
+}

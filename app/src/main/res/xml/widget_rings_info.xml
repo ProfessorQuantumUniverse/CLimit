@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Setup is optional (the defaults work) and can be reopened from the launcher later. -->
+<appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:configure="io.github.professorquantumuniverse.climit.widget.WidgetConfigActivity"
+    android:description="@string/widget_rings_description"
+    android:initialLayout="@layout/glance_default_loading_layout"
+    android:minWidth="180dp"
+    android:minHeight="110dp"
+    android:minResizeWidth="50dp"
+    android:minResizeHeight="50dp"
+    android:maxResizeWidth="1200dp"
+    android:maxResizeHeight="1200dp"
+    android:previewImage="@drawable/widget_preview"
+    android:resizeMode="horizontal|vertical"
+    android:targetCellWidth="4"
+    android:targetCellHeight="2"
+    android:updatePeriodMillis="0"
+    android:widgetCategory="home_screen"
+    android:widgetFeatures="reconfigurable|configuration_optional"
+    app:widgetSize="small|wideSmall|medium|large|extraLarge|extraLargeLong"
+    app:widgetStyle="colorful" />

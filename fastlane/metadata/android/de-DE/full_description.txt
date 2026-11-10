@@ -1,0 +1,24 @@
+CLimit zeigt dein 5-Stunden- und Wochenlimit von Claude auf dem Startbildschirm, jeweils mit dem Zeitpunkt des Resets. Durchgehend in Material 3 Expressive gestaltet und bis ins Detail anpassbar.
+
+<b>Widgets</b>
+<ul>
+<li>Zwölf Stile: Ringe, Wellenringe, verschachtelte Ringe, Tacho, Balken, Wellenbalken, Segmente, Punkte, sich füllende Material-Formen, Füllstand-Kacheln, große Zahlen und eine Kombi-Ansicht</li>
+<li>Jede Größe, von einer Zelle bis Tablet-breit; das Layout passt sich selbst an</li>
+<li>Das ganze Widget kann eine Material-Form annehmen: Cookie, Kleeblatt, Pille, Bogen und mehr</li>
+<li>Farben vom Hintergrundbild, acht feste Paletten oder ein beliebiger Farbton; hell, dunkel oder System</li>
+<li>Kartenfarbe, Deckkraft, Eckenradius, Kontur, Innenabstand und Abstände</li>
+<li>Zahlen in Roboto Flex mit einstellbarer Stärke und Breite</li>
+<li>Optional eine dünne zweite Anzeige, wie viel vom Zeitfenster schon vorbei ist</li>
+<li>Wählbar, was Antippen tut: aktualisieren, CLimit öffnen, Claude öffnen, Widget-Einstellungen öffnen</li>
+<li>Vorlagen, eigene gespeicherte Looks und Einstellungen von Widget zu Widget kopieren</li>
+<li>Hintergrund-Blur mit Samsung One UI Home ab Version 7; anderswo bleibt die Karte halbtransparent</li>
+</ul>
+
+<b>Datenschutz und Sicherheit</b>
+<ul>
+<li>Du meldest dich auf claude.ai mit E-Mail und Code an, in einer abgeschotteten Web-Ansicht</li>
+<li>Die Sitzung wird mit einem Schlüssel im Android Keystore verschlüsselt (StrongBox, wo vorhanden) und verlässt das Gerät nur in Richtung claude.ai</li>
+<li>Kein Backup der Sitzung, keine Analyse, keine Tracker; einzige Berechtigung ist der Internetzugriff</li>
+</ul>
+
+CLimit liest dieselben Nutzungsdaten, die auch die Website claude.ai anzeigt. Diese Schnittstelle ist nicht dokumentiert und kann sich jederzeit ändern. CLimit stammt nicht von Anthropic und ist nicht mit Anthropic verbunden; Claude ist eine Marke von Anthropic.

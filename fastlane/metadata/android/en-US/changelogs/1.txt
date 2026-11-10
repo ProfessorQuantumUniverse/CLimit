@@ -1,0 +1,1 @@
+First release: twelve widget styles, Material shapes, presets, live preview, Samsung blur, English and German.

@@ -1,0 +1,24 @@
+CLimit shows your Claude 5-hour and weekly limits on the home screen, with the time each one resets. It is built entirely in Material 3 Expressive and made to be tuned to the last detail.
+
+<b>Widgets</b>
+<ul>
+<li>Twelve styles: rings, wavy rings, nested rings, gauge, bars, wavy bars, segments, dots, Material shapes that fill up, fill tiles, big numbers and a combined view</li>
+<li>Any size, from a single cell to a tablet-wide widget; the layout adapts on its own</li>
+<li>The whole widget can take a Material shape: cookie, clover, pill, arch and more</li>
+<li>Colours from your wallpaper, eight fixed palettes or any hue; light, dark or system</li>
+<li>Card colour roles, opacity, corner radius, outline, padding and spacing</li>
+<li>Numbers in Roboto Flex with adjustable weight and width</li>
+<li>Optional thin second gauge showing how much of the time window has passed</li>
+<li>Choose what a tap does: refresh, open CLimit, open Claude, open the widget's settings</li>
+<li>Presets, your own saved looks, and copying settings between widgets</li>
+<li>Background blur on Samsung One UI Home 7 and newer; elsewhere the card stays translucent</li>
+</ul>
+
+<b>Privacy and security</b>
+<ul>
+<li>You sign in on claude.ai with your email and a code, inside a locked-down web view</li>
+<li>The session is encrypted with a key in the Android Keystore (StrongBox where available) and never leaves the device except to claude.ai</li>
+<li>No backups of the session, no analytics, no trackers; the only permission is internet access</li>
+</ul>
+
+CLimit reads the same usage data the claude.ai website shows. That interface is not documented, so it can change without notice. CLimit is not made by or affiliated with Anthropic; Claude is a trademark of Anthropic.
