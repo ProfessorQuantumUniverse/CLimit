@@ -19,4 +19,11 @@
         <flag name="extraLarge" value="0x20" />
         <flag name="extraLargeLong" value="0x40" />
     </attr>
+    <!-- Per-size picker previews read by One UI Home. -->
+    <attr name="previewLayoutSmall" format="reference" />
+    <attr name="previewLayoutWideSmall" format="reference" />
+    <attr name="previewLayoutMedium" format="reference" />
+    <attr name="previewLayoutLarge" format="reference" />
+    <attr name="previewLayoutExtraLarge" format="reference" />
+    <attr name="previewLayoutExtraLargeLong" format="reference" />
 </resources>

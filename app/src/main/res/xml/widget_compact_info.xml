@@ -10,6 +10,7 @@
     android:minResizeHeight="50dp"
     android:maxResizeWidth="1200dp"
     android:maxResizeHeight="1200dp"
+    android:previewLayout="@layout/widget_preview_compact_layout"
     android:previewImage="@drawable/widget_preview_compact"
     android:resizeMode="horizontal|vertical"
     android:targetCellWidth="2"
@@ -18,4 +19,10 @@
     android:widgetCategory="home_screen"
     android:widgetFeatures="reconfigurable|configuration_optional"
     app:widgetSize="tiny|small|medium"
+    app:previewLayoutSmall="@layout/widget_preview_compact_layout"
+    app:previewLayoutWideSmall="@layout/widget_preview_compact_layout"
+    app:previewLayoutMedium="@layout/widget_preview_compact_layout"
+    app:previewLayoutLarge="@layout/widget_preview_compact_layout"
+    app:previewLayoutExtraLarge="@layout/widget_preview_compact_layout"
+    app:previewLayoutExtraLargeLong="@layout/widget_preview_compact_layout"
     app:widgetStyle="colorful" />

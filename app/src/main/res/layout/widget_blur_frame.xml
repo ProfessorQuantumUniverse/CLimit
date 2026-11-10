@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Card for Samsung's launcher blur. One UI Home looks for android:id/background and blurs the
+    wallpaper behind it when that view's own background is a colour with alpha 1..254. Glance puts
+    its background colour on a child view instead, so in blur mode the card is this plain frame,
+    coloured directly, and Glance renders the content into blur_container.
+-->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@android:id/background"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <FrameLayout
+        android:id="@+id/blur_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+</FrameLayout>

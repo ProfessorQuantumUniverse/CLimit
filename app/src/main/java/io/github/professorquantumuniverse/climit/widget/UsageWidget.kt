@@ -25,6 +25,9 @@ import androidx.glance.action.Action
 import androidx.glance.action.ActionParameters
 import androidx.glance.action.actionStartActivity
 import androidx.glance.action.clickable
+import android.util.TypedValue
+import android.widget.RemoteViews
+import androidx.glance.appwidget.AndroidRemoteViews
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.GlanceAppWidgetManager
 import androidx.glance.appwidget.GlanceAppWidgetReceiver
@@ -194,8 +197,10 @@ private fun Content(state: UsageState, config: WidgetConfig, appWidgetId: Int) {
     val hasCard = c.tones.container != 0
     val bitmapCard = hasCard && !config.blur && (shape != CardShape.ROUNDED || config.outline)
 
-    var root = GlanceModifier.fillMaxSize().appWidgetBackground()
-    if (hasCard && !bitmapCard) {
+    val blurCard = config.blur && hasCard
+    // In blur mode the background id and colour sit on our own frame (see widget_blur_frame.xml).
+    var root = if (blurCard) GlanceModifier.fillMaxSize() else GlanceModifier.fillMaxSize().appWidgetBackground()
+    if (hasCard && !bitmapCard && !blurCard) {
         root = root.background(ColorProvider(Color(c.tones.container))).cornerRadius(config.cornerDp.dp)
     }
     tapAction(context, config, appWidgetId)?.let { root = root.clickable(it) }
@@ -207,72 +212,100 @@ private fun Content(state: UsageState, config: WidgetConfig, appWidgetId: Int) {
         }
     }
 
-    Box(modifier = root, contentAlignment = Alignment.Center) {
-        if (bitmapCard || (config.blur && config.outline && hasCard)) {
-            val card = WidgetPainter.card(
-                widthPx = c.px(size.width),
-                heightPx = c.px(size.height),
-                shape = shape,
-                cornerPx = config.cornerDp * c.density,
-                fill = if (config.blur) 0 else c.tones.container,
-                outline = if (config.outline) c.tones.outline else 0,
-                outlineWidth = 1.5f * c.density,
-            )
-            Image(ImageProvider(card), null, GlanceModifier.fillMaxSize(), contentScale = ContentScale.FillBounds)
+    val card: @Composable () -> Unit = {
+        Box(modifier = root, contentAlignment = Alignment.Center) {
+            CardContent(c, state, items, size, shape, hasCard, bitmapCard)
         }
-
-        val shortSide = minOf(size.width.value, size.height.value)
-        // Small widgets get tighter insets, otherwise the shape would swallow the content.
-        val shrink = if (shortSide < 130f) 0.5f else 1f
-        val insets = WidgetPainter.cardInsets(shape, size.width.value, size.height.value)
-        val base = 4f + 16f * config.padding
-        // Never let padding eat more than a fifth of a side.
-        fun side(inset: Float, length: Float) = minOf(base + inset * shrink, length * 0.2f).dp
-        val padStart = side(insets[0], size.width.value)
-        val padTop = side(insets[1], size.height.value)
-        val padEnd = side(insets[2], size.width.value)
-        val padBottom = side(insets[3], size.height.value)
-
-        val fetchedAt = state.fetchedAt
-        val stale = fetchedAt != null && Duration.between(fetchedAt, Instant.now()) > STALE_AFTER
-        val footer = when {
-            items.isEmpty() || fetchedAt == null -> null
-            stale && config.staleHint -> context.getString(R.string.widget_stale, resetClock(context, fetchedAt))
-            config.showUpdated -> context.getString(R.string.widget_updated, resetClock(context, fetchedAt))
-            else -> null
+    }
+    if (blurCard) {
+        // Alpha must stay within 1..254: 0 and 255 both switch One UI's blur off.
+        val alpha = (c.tones.container ushr 24).coerceIn(1, 254)
+        val frame = RemoteViews(context.packageName, R.layout.widget_blur_frame).apply {
+            setInt(android.R.id.background, "setBackgroundColor", (c.tones.container and 0x00FFFFFF) or (alpha shl 24))
+            setViewOutlinePreferredRadius(android.R.id.background, config.cornerDp, TypedValue.COMPLEX_UNIT_DIP)
+            setBoolean(android.R.id.background, "setClipToOutline", true)
         }
-        val footerHeight = if (footer != null) c.line(10f) + 2.dp else 0.dp
-        val area = DpSize(
-            (size.width - padStart - padEnd).coerceAtLeast(16.dp),
-            (size.height - padTop - padBottom - footerHeight).coerceAtLeast(16.dp),
-        )
-
-        Column(
-            modifier = GlanceModifier.fillMaxSize().padding(start = padStart, top = padTop, end = padEnd, bottom = padBottom),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            Box(modifier = GlanceModifier.defaultWeight().fillMaxWidth(), contentAlignment = Alignment.Center) {
-                when {
-                    !state.signedIn || state.sessionExpired -> Message(context.getString(R.string.widget_sign_in), c.content)
-                    items.isEmpty() -> Message(context.getString(R.string.widget_loading), c.muted)
-                    else -> Body(c, items, area)
-                }
-            }
-            if (footer != null) {
-                Text(
-                    text = footer,
-                    style = TextStyle(
-                        color = if (stale && config.staleHint) ColorProvider(Color(c.tones.warning)) else c.muted,
-                        fontSize = 10.sp,
-                    ),
-                    maxLines = 1,
-                    modifier = GlanceModifier.padding(top = 2.dp),
-                )
-            }
-        }
+        AndroidRemoteViews(frame, R.id.blur_container, GlanceModifier.fillMaxSize()) { card() }
+    } else {
+        card()
     }
 }
 
+@Composable
+private fun CardContent(
+    c: Ctx,
+    state: UsageState,
+    items: List<WidgetItem>,
+    size: DpSize,
+    shape: CardShape,
+    hasCard: Boolean,
+    bitmapCard: Boolean,
+) {
+    val context = c.context
+    val config = c.config
+    if (bitmapCard || (config.blur && config.outline && hasCard)) {
+        val card = WidgetPainter.card(
+            widthPx = c.px(size.width),
+            heightPx = c.px(size.height),
+            shape = shape,
+            cornerPx = config.cornerDp * c.density,
+            fill = if (config.blur) 0 else c.tones.container,
+            outline = if (config.outline) c.tones.outline else 0,
+            outlineWidth = 1.5f * c.density,
+        )
+        Image(ImageProvider(card), null, GlanceModifier.fillMaxSize(), contentScale = ContentScale.FillBounds)
+    }
+
+    val shortSide = minOf(size.width.value, size.height.value)
+    // Small widgets get tighter insets, otherwise the shape would swallow the content.
+    val shrink = if (shortSide < 130f) 0.5f else 1f
+    val insets = WidgetPainter.cardInsets(shape, size.width.value, size.height.value)
+    val base = 4f + 16f * config.padding
+    // Never let padding eat more than a fifth of a side.
+    fun side(inset: Float, length: Float) = minOf(base + inset * shrink, length * 0.2f).dp
+    val padStart = side(insets[0], size.width.value)
+    val padTop = side(insets[1], size.height.value)
+    val padEnd = side(insets[2], size.width.value)
+    val padBottom = side(insets[3], size.height.value)
+
+    val fetchedAt = state.fetchedAt
+    val stale = fetchedAt != null && Duration.between(fetchedAt, Instant.now()) > STALE_AFTER
+    val footer = when {
+        items.isEmpty() || fetchedAt == null -> null
+        stale && config.staleHint -> context.getString(R.string.widget_stale, resetClock(context, fetchedAt))
+        config.showUpdated -> context.getString(R.string.widget_updated, resetClock(context, fetchedAt))
+        else -> null
+    }
+    val footerHeight = if (footer != null) c.line(10f) + 2.dp else 0.dp
+    val area = DpSize(
+        (size.width - padStart - padEnd).coerceAtLeast(16.dp),
+        (size.height - padTop - padBottom - footerHeight).coerceAtLeast(16.dp),
+    )
+
+    Column(
+        modifier = GlanceModifier.fillMaxSize().padding(start = padStart, top = padTop, end = padEnd, bottom = padBottom),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Box(modifier = GlanceModifier.defaultWeight().fillMaxWidth(), contentAlignment = Alignment.Center) {
+            when {
+                !state.signedIn || state.sessionExpired -> Message(context.getString(R.string.widget_sign_in), c.content)
+                items.isEmpty() -> Message(context.getString(R.string.widget_loading), c.muted)
+                else -> Body(c, items, area)
+            }
+        }
+        if (footer != null) {
+            Text(
+                text = footer,
+                style = TextStyle(
+                    color = if (stale && config.staleHint) ColorProvider(Color(c.tones.warning)) else c.muted,
+                    fontSize = 10.sp,
+                ),
+                maxLines = 1,
+                modifier = GlanceModifier.padding(top = 2.dp),
+            )
+        }
+    }
+}
 @Composable
 private fun Body(c: Ctx, all: List<WidgetItem>, area: DpSize) {
     val style = c.config.style
