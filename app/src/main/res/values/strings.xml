@@ -14,7 +14,9 @@
     <string name="home_subtitle">Your Claude usage</string>
     <string name="home_more_limits">More limits</string>
     <string name="home_widgets_title">Widgets</string>
-    <string name="home_widgets_body">Long-press a CLimit widget on your home screen and choose its settings to change the look.</string>
+    <string name="home_widgets_body">Tap a widget to change its look. Many home screens also open its settings when you long-press it.</string>
+    <string name="home_widgets_empty">Add a widget to your home screen. You can then change its look here.</string>
+    <string name="action_edit_widget">Edit</string>
     <string name="home_updated">Updated %1$s</string>
 
     <string name="login_hint">Sign in with your email and the code you receive. Google sign-in does not work here.</string>

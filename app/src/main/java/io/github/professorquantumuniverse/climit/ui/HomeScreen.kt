@@ -26,6 +26,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.Logout
 import androidx.compose.material.icons.rounded.Add
+import androidx.compose.material.icons.rounded.Edit
 import androidx.compose.material.icons.rounded.Refresh
 import androidx.compose.material.icons.rounded.Widgets
 import androidx.compose.material3.Button
@@ -69,7 +70,10 @@ import io.github.professorquantumuniverse.climit.R
 import io.github.professorquantumuniverse.climit.data.LimitKind
 import io.github.professorquantumuniverse.climit.data.UsageLimit
 import io.github.professorquantumuniverse.climit.data.UsageSnapshot
+import io.github.professorquantumuniverse.climit.widget.PlacedWidget
+import io.github.professorquantumuniverse.climit.widget.PresetThumb
 import io.github.professorquantumuniverse.climit.widget.resetClock
+import io.github.professorquantumuniverse.climit.widget.styleName
 import java.time.Duration
 import java.time.Instant
 import kotlin.math.roundToInt
@@ -114,7 +118,9 @@ fun UsageScreen(
     loading: Boolean,
     error: String?,
     onRefresh: () -> Unit,
+    widgets: List<PlacedWidget>,
     onAddWidget: (compact: Boolean) -> Unit,
+    onEditWidget: (appWidgetId: Int) -> Unit,
     onSignOut: () -> Unit,
 ) {
     val context = LocalContext.current
@@ -193,7 +199,7 @@ fun UsageScreen(
                     }
                 }
 
-                item { WidgetsCard(onAddWidget) }
+                item { WidgetsCard(widgets, onAddWidget, onEditWidget) }
             }
         }
     }
@@ -267,9 +273,13 @@ private fun SurfaceRow(name: String, percent: Double) {
     }
 }
 
-/** Adding widgets from the app, with a hint where their settings live. */
+/**
+ * The widgets on the home screen with their settings one tap away, plus buttons to add more.
+ * Not every launcher offers an "edit widget" action on long-press (ColorOS does not), so the app
+ * is the one place where the settings always open.
+ */
 @Composable
-private fun WidgetsCard(onAddWidget: (compact: Boolean) -> Unit) {
+private fun WidgetsCard(widgets: List<PlacedWidget>, onAddWidget: (compact: Boolean) -> Unit, onEditWidget: (appWidgetId: Int) -> Unit) {
     Surface(color = MaterialTheme.colorScheme.surfaceContainerHigh, shape = RoundedCornerShape(32.dp), modifier = Modifier.fillMaxWidth()) {
         Column(Modifier.padding(20.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
@@ -277,8 +287,17 @@ private fun WidgetsCard(onAddWidget: (compact: Boolean) -> Unit) {
                 Spacer(Modifier.width(16.dp))
                 Text(stringResource(R.string.home_widgets_title), style = MaterialTheme.typography.titleLargeEmphasized)
             }
-            Text(stringResource(R.string.home_widgets_body), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            Text(
+                stringResource(if (widgets.isEmpty()) R.string.home_widgets_empty else R.string.home_widgets_body),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+            if (widgets.isNotEmpty()) {
+                Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                    widgets.forEachIndexed { index, widget -> PlacedWidgetRow(index, widget) { onEditWidget(widget.appWidgetId) } }
+                }
+            }
+            FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 Button(onClick = { onAddWidget(false) }, modifier = Modifier.heightIn(min = 48.dp)) {
                     Icon(Icons.Rounded.Add, null, Modifier.size(18.dp))
                     Spacer(Modifier.width(8.dp))
@@ -290,6 +309,29 @@ private fun WidgetsCard(onAddWidget: (compact: Boolean) -> Unit) {
                     Text(stringResource(R.string.widget_compact_name))
                 }
             }
+        }
+    }
+}
+
+/** One placed widget, numbered like in the "copy from" dialog; a tap opens its settings. */
+@Composable
+private fun PlacedWidgetRow(index: Int, widget: PlacedWidget, onClick: () -> Unit) {
+    Surface(onClick = onClick, shape = RoundedCornerShape(20.dp), color = MaterialTheme.colorScheme.surfaceContainerHighest) {
+        Row(
+            Modifier.fillMaxWidth().heightIn(min = 64.dp).padding(horizontal = 12.dp, vertical = 10.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            PresetThumb(widget.config)
+            Spacer(Modifier.width(12.dp))
+            Column(Modifier.weight(1f)) {
+                Text(stringResource(R.string.widget_number, index + 1), style = MaterialTheme.typography.bodyLarge)
+                Text(
+                    stringResource(styleName(widget.config.style)),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+            Icon(Icons.Rounded.Edit, stringResource(R.string.action_edit_widget), tint = MaterialTheme.colorScheme.onSurfaceVariant)
         }
     }
 }

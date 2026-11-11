@@ -7,10 +7,14 @@
 
 package io.github.professorquantumuniverse.climit.widget
 
+import android.app.ActivityOptions
+import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.widget.FrameLayout
 import android.widget.RemoteViews
@@ -183,8 +187,45 @@ import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
-/** Settings for one widget instance, opened from the launcher's "edit widget" action. */
+/**
+ * Settings for one widget instance. The launcher opens it from its "edit widget" action; launchers
+ * without one (ColorOS) rely on the widget list in the app, the tap action, or the add flow.
+ */
 class WidgetConfigActivity : ComponentActivity() {
+
+    companion object {
+        /** Opens the settings of [appWidgetId]. */
+        fun intent(context: Context, appWidgetId: Int): Intent =
+            Intent(context, WidgetConfigActivity::class.java)
+                .putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
+                // Makes the intent unique per widget, so each opens its own settings.
+                .setData(Uri.parse("climit://widget/$appWidgetId"))
+
+        /**
+         * Opens the settings of a widget the app asked the launcher to add, once it is placed.
+         * The launcher fills in the new widget's id, so the intent must stay mutable.
+         */
+        fun afterPin(context: Context): PendingIntent {
+            val intent = Intent(context, WidgetConfigActivity::class.java)
+            // The launcher sends this while the app is still on screen behind its add dialog.
+            val options = when {
+                Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA -> ActivityOptions.makeBasic()
+                    .setPendingIntentCreatorBackgroundActivityStartMode(ActivityOptions.MODE_BACKGROUND_ACTIVITY_START_ALLOW_IF_VISIBLE)
+                    .toBundle()
+                Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE -> ActivityOptions.makeBasic()
+                    .setPendingIntentCreatorBackgroundActivityStartMode(@Suppress("DEPRECATION") ActivityOptions.MODE_BACKGROUND_ACTIVITY_START_ALLOWED)
+                    .toBundle()
+                else -> null
+            }
+            return PendingIntent.getActivity(
+                context,
+                0,
+                intent,
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE,
+                options,
+            )
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -423,7 +464,7 @@ private fun ConfigScreen(
 
     if (showCopyDialog) {
         CopyFromDialog(
-            currentId = glanceId,
+            currentId = appWidgetId,
             onDismiss = { showCopyDialog = false },
             onPick = {
                 haptics.confirm()
@@ -1273,7 +1314,7 @@ private fun styleThumbnail(context: Context, style: WidgetStyle, color: Int, tra
     return bitmap.asImageBitmap()
 }
 
-private fun styleName(style: WidgetStyle): Int = when (style) {
+internal fun styleName(style: WidgetStyle): Int = when (style) {
     WidgetStyle.RINGS -> R.string.style_rings
     WidgetStyle.WAVY_RINGS -> R.string.style_wavy_rings
     WidgetStyle.CONCENTRIC -> R.string.style_concentric
@@ -1373,19 +1414,12 @@ private fun SavePresetDialog(onDismiss: () -> Unit, onSave: (String) -> Unit) {
 
 /** Lists the other CLimit widgets and copies all settings of the one picked. */
 @Composable
-private fun CopyFromDialog(currentId: GlanceId, onDismiss: () -> Unit, onPick: (WidgetConfig) -> Unit) {
+private fun CopyFromDialog(currentId: Int, onDismiss: () -> Unit, onPick: (WidgetConfig) -> Unit) {
     val context = LocalContext.current
-    var others by remember { mutableStateOf<List<WidgetConfig>?>(null) }
+    // Numbered like the list in the app, so "Widget 2" is the same widget in both places.
+    var others by remember { mutableStateOf<List<IndexedValue<PlacedWidget>>?>(null) }
     LaunchedEffect(Unit) {
-        val manager = GlanceAppWidgetManager(context)
-        others = manager.getGlanceIds(UsageWidget::class.java).filter { it != currentId }.mapNotNull { id ->
-            runCatching {
-                WidgetConfig.from(
-                    getAppWidgetState(context, PreferencesGlanceStateDefinition, id),
-                    UsageWidget.defaultsFor(context, manager.getAppWidgetId(id)),
-                )
-            }.getOrNull()
-        }
+        others = placedWidgets(context).withIndex().filter { it.value.appWidgetId != currentId }
     }
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -1397,7 +1431,8 @@ private fun CopyFromDialog(currentId: GlanceId, onDismiss: () -> Unit, onPick: (
                 list == null -> Unit
                 list.isEmpty() -> Text(stringResource(R.string.no_other_widgets))
                 else -> Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                    list.forEachIndexed { index, cfg ->
+                    list.forEach { (index, widget) ->
+                        val cfg = widget.config
                         Surface(onClick = { onPick(cfg) }, shape = RoundedCornerShape(16.dp), color = MaterialTheme.colorScheme.surfaceContainerHigh) {
                             Row(Modifier.fillMaxWidth().padding(12.dp), verticalAlignment = Alignment.CenterVertically) {
                                 PresetThumb(cfg)
@@ -1421,7 +1456,7 @@ private fun CopyFromDialog(currentId: GlanceId, onDismiss: () -> Unit, onPick: (
 }
 
 @Composable
-private fun PresetThumb(look: WidgetConfig) {
+internal fun PresetThumb(look: WidgetConfig) {
     val context = LocalContext.current
     val density = LocalDensity.current.density
     val tones = remember(look) { widgetTones(context, look.copy(containerOpacity = 1f, blur = false)) }

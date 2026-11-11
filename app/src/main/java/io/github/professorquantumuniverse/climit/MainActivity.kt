@@ -17,16 +17,20 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.glance.appwidget.GlanceAppWidgetManager
 import androidx.glance.appwidget.updateAll
+import androidx.lifecycle.compose.LifecycleResumeEffect
 import io.github.professorquantumuniverse.climit.data.ApiException
 import io.github.professorquantumuniverse.climit.data.SessionRepository
 import io.github.professorquantumuniverse.climit.ui.ClimitTheme
 import io.github.professorquantumuniverse.climit.ui.LoginScreen
 import io.github.professorquantumuniverse.climit.ui.UsageScreen
 import io.github.professorquantumuniverse.climit.ui.WelcomeScreen
+import io.github.professorquantumuniverse.climit.widget.PlacedWidget
 import io.github.professorquantumuniverse.climit.widget.RefreshWorker
 import io.github.professorquantumuniverse.climit.widget.UsageWidget
 import io.github.professorquantumuniverse.climit.widget.UsageWidgetCompactReceiver
 import io.github.professorquantumuniverse.climit.widget.UsageWidgetReceiver
+import io.github.professorquantumuniverse.climit.widget.WidgetConfigActivity
+import io.github.professorquantumuniverse.climit.widget.placedWidgets
 import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
@@ -51,7 +55,8 @@ private fun App(repository: SessionRepository) {
     var loading by remember { mutableStateOf(false) }
     var error by remember { mutableStateOf<ApiException?>(null) }
     val scope = rememberCoroutineScope()
-    val context = LocalContext.current.applicationContext
+    val activity = LocalContext.current
+    val context = activity.applicationContext
 
     suspend fun refresh() {
         loading = true
@@ -92,18 +97,30 @@ private fun App(repository: SessionRepository) {
                 repository.load()
                 refresh()
             }
+            // Widgets come and go on the home screen and change in their settings, so re-read on return.
+            var widgets by remember { mutableStateOf(emptyList<PlacedWidget>()) }
+            LifecycleResumeEffect(Unit) {
+                val job = scope.launch { widgets = placedWidgets(context) }
+                onPauseOrDispose { job.cancel() }
+            }
             UsageScreen(
                 snapshot = state?.snapshot,
                 fetchedAt = state?.fetchedAt,
                 loading = loading,
                 error = error?.let { errorText(it) },
                 onRefresh = { scope.launch { refresh() } },
+                widgets = widgets,
                 onAddWidget = { compact ->
                     scope.launch {
                         val receiver = if (compact) UsageWidgetCompactReceiver::class.java else UsageWidgetReceiver::class.java
-                        GlanceAppWidgetManager(context).requestPinGlanceAppWidget(receiver)
+                        // Setup is optional, so launchers skip it; open it here once the widget is placed.
+                        GlanceAppWidgetManager(context).requestPinGlanceAppWidget(
+                            receiver,
+                            successCallback = WidgetConfigActivity.afterPin(context),
+                        )
                     }
                 },
+                onEditWidget = { appWidgetId -> activity.startActivity(WidgetConfigActivity.intent(activity, appWidgetId)) },
                 onSignOut = {
                     scope.launch {
                         loading = true

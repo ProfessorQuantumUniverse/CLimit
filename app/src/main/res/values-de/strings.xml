@@ -12,7 +12,9 @@
     <string name="home_subtitle">Deine Claude-Nutzung</string>
     <string name="home_more_limits">Weitere Limits</string>
     <string name="home_widgets_title">Widgets</string>
-    <string name="home_widgets_body">Halte ein CLimit-Widget auf dem Startbildschirm gedrückt und öffne seine Einstellungen, um den Look zu ändern.</string>
+    <string name="home_widgets_body">Tippe auf ein Widget, um seinen Look zu ändern. Auf vielen Startbildschirmen öffnen sich die Einstellungen auch, wenn du das Widget gedrückt hältst.</string>
+    <string name="home_widgets_empty">Füge ein Widget zu deinem Startbildschirm hinzu. Seinen Look kannst du dann hier ändern.</string>
+    <string name="action_edit_widget">Bearbeiten</string>
     <string name="home_updated">Aktualisiert %1$s</string>
 
     <string name="login_hint">Melde dich mit deiner E-Mail und dem zugeschickten Code an. Die Google-Anmeldung funktioniert hier nicht.</string>

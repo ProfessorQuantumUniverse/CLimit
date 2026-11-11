@@ -147,13 +147,7 @@ private fun tapAction(context: Context, config: WidgetConfig, appWidgetId: Int):
     TapAction.OPEN_SETTINGS -> if (appWidgetId == AppWidgetManager.INVALID_APPWIDGET_ID) {
         null
     } else {
-        actionStartActivity(
-            Intent(context, WidgetConfigActivity::class.java)
-                .putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
-                // Makes the intent unique per widget, so each opens its own settings.
-                .setData(Uri.parse("climit://widget/$appWidgetId"))
-                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        )
+        actionStartActivity(WidgetConfigActivity.intent(context, appWidgetId).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
     }
     TapAction.NONE -> null
 }
