@@ -64,7 +64,8 @@ class ClaudeApi(
 
     /** Raw JSON of the usage endpoint; parse it with [UsageParser]. */
     suspend fun usageBody(sessionKey: String, organizationUuid: String): String {
-        require(UUID_PATTERN.matches(organizationUuid)) { "Not an organization UUID" }
+        // A damaged stored id cannot be fixed by retrying; a fresh sign-in stores a new one.
+        if (!UUID_PATTERN.matches(organizationUuid)) throw ApiException.SignedOut()
         return get("/api/organizations/$organizationUuid/usage", sessionKey)
     }
 

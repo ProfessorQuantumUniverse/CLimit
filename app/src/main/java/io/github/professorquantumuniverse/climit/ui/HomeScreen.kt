@@ -117,6 +117,8 @@ fun UsageScreen(
     fetchedAt: Instant?,
     loading: Boolean,
     error: String?,
+    /** Set when the session has expired: the error card then offers to sign in again. */
+    onSignInAgain: (() -> Unit)?,
     onRefresh: () -> Unit,
     widgets: List<PlacedWidget>,
     onAddWidget: (compact: Boolean) -> Unit,
@@ -160,7 +162,7 @@ fun UsageScreen(
                 ),
                 verticalArrangement = Arrangement.spacedBy(12.dp),
             ) {
-                if (error != null) item { ErrorCard(error) }
+                if (error != null) item { ErrorCard(error, onSignInAgain) }
 
                 if (snapshot == null) {
                     if (loading) {
@@ -206,9 +208,16 @@ fun UsageScreen(
 }
 
 @Composable
-private fun ErrorCard(error: String) {
+private fun ErrorCard(error: String, onSignInAgain: (() -> Unit)?) {
     Surface(color = MaterialTheme.colorScheme.errorContainer, shape = RoundedCornerShape(24.dp), modifier = Modifier.fillMaxWidth()) {
-        Text(error, color = MaterialTheme.colorScheme.onErrorContainer, style = MaterialTheme.typography.bodyLarge, modifier = Modifier.padding(20.dp))
+        Column(Modifier.padding(20.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
+            Text(error, color = MaterialTheme.colorScheme.onErrorContainer, style = MaterialTheme.typography.bodyLarge)
+            if (onSignInAgain != null) {
+                Button(onClick = onSignInAgain, modifier = Modifier.heightIn(min = 48.dp)) {
+                    Text(stringResource(R.string.action_sign_in_again))
+                }
+            }
+        }
     }
 }
 

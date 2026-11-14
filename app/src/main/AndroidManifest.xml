@@ -27,8 +27,13 @@
         android:supportsRtl="true"
         android:theme="@android:style/Theme.DeviceDefault.NoActionBar">
 
+        <!--
+            Compose handles rotation and resizing itself. Recreating the activity would also throw
+            away the sign-in page halfway through (the WebView is wiped on dispose).
+        -->
         <activity
             android:name=".MainActivity"
+            android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize|keyboard|keyboardHidden"
             android:exported="true"
             android:windowSoftInputMode="adjustResize">
             <intent-filter>

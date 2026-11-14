@@ -20,6 +20,7 @@ import androidx.glance.appwidget.updateAll
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import io.github.professorquantumuniverse.climit.data.ApiException
 import io.github.professorquantumuniverse.climit.data.SessionRepository
+import io.github.professorquantumuniverse.climit.ui.CandidateResult
 import io.github.professorquantumuniverse.climit.ui.ClimitTheme
 import io.github.professorquantumuniverse.climit.ui.LoginScreen
 import io.github.professorquantumuniverse.climit.ui.UsageScreen
@@ -78,17 +79,21 @@ private fun App(repository: SessionRepository) {
             onCandidate = { sessionKey ->
                 try {
                     repository.completeSignIn(sessionKey)
-                    true
-                } catch (_: ApiException) {
-                    // Not accepted (yet), or offline: keep the sign-in page open.
-                    false
+                    CandidateResult.ACCEPTED
+                } catch (e: ApiException) {
+                    // Keep the sign-in page open either way; only a refused key is given up on.
+                    when (e) {
+                        is ApiException.Network, is ApiException.RateLimited, is ApiException.Server -> CandidateResult.RETRY
+                        else -> CandidateResult.REJECTED
+                    }
                 }
             },
             onSignedIn = {
                 RefreshWorker.schedule(context)
                 screen = Screen.USAGE
             },
-            onCancel = { screen = Screen.WELCOME },
+            // Signing in again after the session expired: cancelling goes back to the old numbers.
+            onCancel = { screen = if (repository.isSignedIn()) Screen.USAGE else Screen.WELCOME },
         )
 
         Screen.USAGE -> {
@@ -100,14 +105,20 @@ private fun App(repository: SessionRepository) {
             // Widgets come and go on the home screen and change in their settings, so re-read on return.
             var widgets by remember { mutableStateOf(emptyList<PlacedWidget>()) }
             LifecycleResumeEffect(Unit) {
-                val job = scope.launch { widgets = placedWidgets(context) }
+                val job = scope.launch {
+                    widgets = placedWidgets(context)
+                    // A force-stop cancels scheduled work; opening the app brings it back.
+                    if (widgets.isNotEmpty()) RefreshWorker.schedule(context)
+                }
                 onPauseOrDispose { job.cancel() }
             }
+            val expired = error is ApiException.SignedOut || state?.sessionExpired == true
             UsageScreen(
                 snapshot = state?.snapshot,
                 fetchedAt = state?.fetchedAt,
                 loading = loading,
-                error = error?.let { errorText(it) },
+                error = if (expired) stringResource(R.string.error_signed_out) else error?.let { errorText(it) },
+                onSignInAgain = if (expired) ({ screen = Screen.LOGIN }) else null,
                 onRefresh = { scope.launch { refresh() } },
                 widgets = widgets,
                 onAddWidget = { compact ->

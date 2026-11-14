@@ -41,16 +41,27 @@ private const val LOGIN_URL = "https://claude.ai/login"
 private const val COOKIE_URL = "https://claude.ai"
 private const val ALLOWED_HOST = "claude.ai"
 
+/** What checking a session cookie from the sign-in page came to. */
+enum class CandidateResult {
+    ACCEPTED,
+
+    /** The server does not take this cookie; wait for a different one. */
+    REJECTED,
+
+    /** It could not be checked (no connection, rate limit); try the same cookie again. */
+    RETRY,
+}
+
 /**
  * Shows the claude.ai sign-in page in a locked-down WebView and waits for the session cookie.
  *
- * [onCandidate] gets every new `sessionKey` value and returns whether the server accepted it.
+ * [onCandidate] gets every new `sessionKey` value and says what the server made of it.
  * Once one is accepted the WebView's cookies and storage are wiped, so the app's encrypted
  * copy is the only one left on the device.
  */
 @Composable
 fun LoginScreen(
-    onCandidate: suspend (sessionKey: String) -> Boolean,
+    onCandidate: suspend (sessionKey: String) -> CandidateResult,
     onSignedIn: () -> Unit,
     onCancel: () -> Unit,
 ) {
@@ -77,13 +88,17 @@ fun LoginScreen(
             val candidate = readSessionKey() ?: continue
             if (candidate == rejected) continue
             checking = true
-            val accepted = onCandidate(candidate)
+            val result = onCandidate(candidate)
             checking = false
-            if (accepted) {
-                onSignedIn()
-                return@LaunchedEffect
+            when (result) {
+                CandidateResult.ACCEPTED -> {
+                    onSignedIn()
+                    return@LaunchedEffect
+                }
+                CandidateResult.REJECTED -> rejected = candidate
+                // Offline or a hiccup: the same key may well work in a moment, so ask again.
+                CandidateResult.RETRY -> delay(3_000)
             }
-            rejected = candidate
         }
     }
 

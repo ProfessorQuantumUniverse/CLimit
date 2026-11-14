@@ -6,6 +6,8 @@ import androidx.core.content.edit
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.IOException
@@ -80,8 +82,13 @@ class SessionRepository(
         load()
     }
 
-    /** Fetches fresh usage, caches it and publishes the new state. */
-    suspend fun refresh(): UsageState {
+    /**
+     * Fetches fresh usage, caches it and publishes the new state. The app and the background
+     * worker may both call this at once; the lock keeps them from writing the cache together.
+     */
+    suspend fun refresh(): UsageState = lock.withLock { fetch() }
+
+    private suspend fun fetch(): UsageState {
         if (DemoData.usageJson(appContext) != null) return load()
         val organization = prefs.getString(KEY_ORG, null) ?: throw ApiException.SignedOut()
         val sessionKey = withContext(Dispatchers.IO) { vault.load() } ?: throw ApiException.SignedOut()
@@ -111,7 +118,8 @@ class SessionRepository(
     }
 
     /** Ends the session on the server if possible, then always wipes everything locally. */
-    suspend fun signOut() {
+    suspend fun signOut() = lock.withLock {
+        // Under the lock, so a refresh still in flight cannot write the cache back afterwards.
         val sessionKey = withContext(Dispatchers.IO) { vault.load() }
         if (sessionKey != null) {
             try {
@@ -133,6 +141,7 @@ class SessionRepository(
         private const val KEY_EXPIRED = "session_expired"
 
         private val mutableState = MutableStateFlow<UsageState?>(null)
+        private val lock = Mutex()
 
         /** Latest state in this process; null until [load] has run once. */
         val state: StateFlow<UsageState?> = mutableState

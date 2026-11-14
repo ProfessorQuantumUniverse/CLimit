@@ -1,8 +1,16 @@
+import java.util.Properties
+
 plugins {
     // AGP 9 ships built-in Kotlin support, so no org.jetbrains.kotlin.android here.
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlin.serialization)
+}
+
+// Signing for the APKs on GitHub Releases. Without keystore.properties (F-Droid, other builders)
+// the release APK stays unsigned. See keystore.properties.example.
+val keystoreProperties = Properties().apply {
+    rootProject.file("keystore.properties").takeIf { it.isFile }?.inputStream()?.use { load(it) }
 }
 
 android {
@@ -17,8 +25,20 @@ android {
         versionName = "0.1.0"
     }
 
+    signingConfigs {
+        if (!keystoreProperties.isEmpty) {
+            create("release") {
+                storeFile = rootProject.file(keystoreProperties.getProperty("storeFile"))
+                storePassword = keystoreProperties.getProperty("storePassword")
+                keyAlias = keystoreProperties.getProperty("keyAlias")
+                keyPassword = keystoreProperties.getProperty("keyPassword")
+            }
+        }
+    }
+
     buildTypes {
         release {
+            signingConfig = signingConfigs.findByName("release")
             isMinifyEnabled = true
             isShrinkResources = true
             // Reproducible builds: no git metadata in the APK.

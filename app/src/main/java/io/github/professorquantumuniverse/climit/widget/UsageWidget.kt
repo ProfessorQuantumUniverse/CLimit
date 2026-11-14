@@ -197,7 +197,10 @@ private fun Content(state: UsageState, config: WidgetConfig, appWidgetId: Int) {
     if (hasCard && !bitmapCard && !blurCard) {
         root = root.background(ColorProvider(Color(c.tones.container))).cornerRadius(config.cornerDp.dp)
     }
-    tapAction(context, config, appWidgetId)?.let { root = root.clickable(it) }
+    // A widget that asks to sign in must lead there, whatever its tap action is.
+    val needsSignIn = !state.signedIn || state.sessionExpired
+    val action = if (needsSignIn) actionStartActivity<MainActivity>() else tapAction(context, config, appWidgetId)
+    action?.let { root = root.clickable(it) }
 
     val items = state.snapshot?.let { widgetItems(context, config, c.tones, it) }.orEmpty()
     root = root.semantics {
@@ -283,7 +286,12 @@ private fun CardContent(
         Box(modifier = GlanceModifier.defaultWeight().fillMaxWidth(), contentAlignment = Alignment.Center) {
             when {
                 !state.signedIn || state.sessionExpired -> Message(context.getString(R.string.widget_sign_in), c.content)
-                items.isEmpty() -> Message(context.getString(R.string.widget_loading), c.muted)
+                // With data but nothing to show (say, only model limits chosen and the plan has none),
+                // "Loading" would never go away.
+                items.isEmpty() -> Message(
+                    context.getString(if (state.snapshot == null) R.string.widget_loading else R.string.widget_no_limits),
+                    c.muted,
+                )
                 else -> Body(c, items, area)
             }
         }

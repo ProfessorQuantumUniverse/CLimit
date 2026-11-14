@@ -1,14 +1,31 @@
-*.iml
-.gradle
-.kotlin
-/local.properties
-/.idea
-.DS_Store
+# Gradle and Kotlin
+.gradle/
+.kotlin/
 build/
-/captures
-.externalNativeBuild
-.cxx
-*.claude
-/app/release
+/local.properties
+
+# Android Studio / IntelliJ
+/.idea/
+*.iml
+/captures/
+.externalNativeBuild/
+.cxx/
+
+# Build output
+/app/release/
+/app/debug/
+*.apk
+*.aab
+
+# Signing: never commit keys or their passwords
 *.jks
 *.keystore
+keystore.properties
+
+# OS and tools
+.DS_Store
+Thumbs.db
+.claude/
+
+# Personal notes
+/docs/BACKLOG.md
